@@ -53,7 +53,9 @@ class BuildLineGraph extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 5),
+            const SizedBox(height: 10),
+            Divider(color: Colors.grey.shade300, thickness: 1),
+            const SizedBox(height: 10),
             SizedBox(
               height: 250,
               child: LineChart(
@@ -84,7 +86,7 @@ class BuildLineGraph extends StatelessWidget {
                           return Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: Text(
-                              value.toInt().toString(), // Remove decimals
+                              value.toInt().toString(),
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
