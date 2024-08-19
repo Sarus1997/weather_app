@@ -63,26 +63,26 @@ class BuildBarGraph extends StatelessWidget {
                   Text(
                     isEnglish ? 'Weather Bar Graph' : 'กราฟแท่งสภาพอากาศ',
                     style: const TextStyle(
-                      fontSize: 22,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               buildBarChart(
                 label: isEnglish ? 'Temperature (°C)' : 'อุณหภูมิ (°C)',
                 value: temperature,
                 maxY: 50,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               buildBarChart(
                 label: isEnglish ? 'Humidity (%)' : 'ความชื้น (%)',
                 value: humidity,
                 maxY: 100,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               buildBarChart(
                 label: isEnglish ? 'Wind Speed (m/s)' : 'ความเร็วลม (m/s)',
                 value: windSpeed,

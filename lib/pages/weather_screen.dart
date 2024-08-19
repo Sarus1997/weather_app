@@ -54,79 +54,79 @@ class _WeatherScreenState extends State<WeatherScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            _isEnglish ? 'Weather App' : 'แอพพยากรณ์อากาศ',
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 20,
-            ),
+      appBar: AppBar(
+        toolbarHeight: 40.0,
+        title: Text(
+          _isEnglish ? 'Weather App' : 'แอพพยากรณ์อากาศ',
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 20,
           ),
-          backgroundColor: Colors.blueAccent,
-          elevation: 4,
-          shadowColor: Colors.blueAccent.withOpacity(0.5),
-          centerTitle: true,
-          actions: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 400),
-              child: IconButton(
-                icon: Image.asset(
-                  _isEnglish ? 'assets/img/english.png' : 'assets/img/thai.png',
-                  width: 28,
-                  height: 28,
+        ),
+        backgroundColor: Colors.blueAccent,
+        elevation: 4,
+        shadowColor: Colors.blueAccent.withOpacity(0.5),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Image.asset(
+              _isEnglish ? 'assets/img/english.png' : 'assets/img/thai.png',
+              width: 28,
+              height: 28,
+            ),
+            onPressed: _toggleLanguage,
+            tooltip: _isEnglish ? 'Switch to Thai' : 'เปลี่ยนเป็นภาษาอังกฤษ',
+          ),
+        ],
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth > 600) {
+            return _buildLargeScreenLayout();
+          } else {
+            return _buildSmallScreenLayout();
+          }
+        },
+      ),
+      bottomNavigationBar: BottomAppBar(
+        height: 37.0,
+        color: Colors.blue[200],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 0.0),
+                child: Text(
+                  _isEnglish
+                      ? 'Developed by ⚒️ Saharat Suwannapapond'
+                      : 'พัฒนาโดย ⚒️ สหรัฐ สุวรรณภาพร',
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 23, 5, 104),
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                onPressed: _toggleLanguage,
-                tooltip:
-                    _isEnglish ? 'Switch to Thai' : 'เปลี่ยนเป็นภาษาอังกฤษ',
               ),
-            ),
-          ],
-        ),
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth > 600) {
-              return _buildLargeScreenLayout();
-            } else {
-              return _buildSmallScreenLayout();
-            }
-          },
-        ),
-        bottomNavigationBar: PreferredSize(
-          preferredSize: const Size.fromHeight(100.0),
-          child: BottomAppBar(
-            color: Colors.blue[200],
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    _isEnglish
-                        ? 'Developed by Saharat Suwannapapond'
-                        : 'พัฒนาโดย สหรัฐ สุวรรณภาพร',
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 173, 20, 87),
-                      fontSize: 12, // Font size
-                      fontWeight: FontWeight.bold,
-                    ),
+              Padding(
+                padding: const EdgeInsets.only(top: 0.0),
+                child: Text(
+                  _isEnglish
+                      ? '© $currentYear All rights reserved.'
+                      : '© $currentYear สงวนลิขสิทธิ์',
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 173, 20, 87),
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _isEnglish
-                        ? '© $currentYear All rights reserved.'
-                        : '© $currentYear สงวนลิขสิทธิ์',
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 173, 20, 87),
-                      fontSize: 12, // Font size
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget _buildSmallScreenLayout() {
@@ -140,13 +140,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
       ),
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
               _buildSearchCard(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               _buildFetchButton(),
-              const SizedBox(height: 40),
+              const SizedBox(height: 10),
               if (_weatherData != null) ..._buildWeatherInfoList(),
             ],
           ),
@@ -167,48 +167,59 @@ class _WeatherScreenState extends State<WeatherScreen> {
       child: Container(
         color: Colors.blue[200]!.withOpacity(0.5),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  children: [
-                    _buildSearchCard(),
-                    const SizedBox(height: 10),
-                    _buildFetchButton(),
-                    const SizedBox(height: 10),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 10),
-                            BuildLineGraph(
-                              isEnglish: _isEnglish,
-                              weatherData: _weatherData,
-                            ),
-                            const SizedBox(height: 10),
-                            BuildBarGraph(
-                              isEnglish: _isEnglish,
-                              weatherData: _weatherData,
-                            ),
-                          ],
+          padding: const EdgeInsets.all(8.0),
+          child: AnimatedAlign(
+            duration: const Duration(milliseconds: 300),
+            alignment: _isEnglish ? Alignment.centerLeft : Alignment.center,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildSearchCard(),
+                          const SizedBox(
+                              width:
+                                  5), // Changed to width for horizontal spacing
+                          _buildClearButton(),
+                        ],
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 5),
+                              BuildLineGraph(
+                                isEnglish: _isEnglish,
+                                weatherData: _weatherData,
+                              ),
+                              const SizedBox(height: 5),
+                              BuildBarGraph(
+                                isEnglish: _isEnglish,
+                                weatherData: _weatherData,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 40),
-              Expanded(
-                child: _weatherData != null
-                    ? SingleChildScrollView(
-                        child: Column(
-                          children: _buildWeatherInfoList(),
-                        ),
-                      )
-                    : const Center(),
-              ),
-            ],
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _weatherData != null
+                      ? SingleChildScrollView(
+                          child: Column(
+                            children: _buildWeatherInfoList(),
+                          ),
+                        )
+                      : const Center(),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -219,9 +230,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Padding(
+      child: Container(
+        constraints: const BoxConstraints(
+          maxWidth: 340,
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           children: [
@@ -233,21 +247,17 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   border: InputBorder.none,
                   icon: Icon(Icons.location_city, color: Colors.blue[700]),
                 ),
-                style: const TextStyle(fontFamily: 'YourThaiFont'),
+                style: const TextStyle(
+                  fontFamily: 'Raleway',
+                  color: Colors.black,
+                ),
                 onSubmitted: (String value) {
                   _fetchWeather();
                 },
               ),
             ),
-            IconButton(
-              icon: Icon(Icons.clear, color: Colors.blue[700]),
-              onPressed: () {
-                setState(() {
-                  _controller.clear();
-                  _weatherData = null;
-                });
-              },
-            ),
+            const SizedBox(width: 8),
+            _buildFetchButton(),
           ],
         ),
       ),
@@ -259,20 +269,52 @@ class _WeatherScreenState extends State<WeatherScreen> {
       onPressed: _isLoading ? null : _fetchWeather,
       style: ElevatedButton.styleFrom(
         foregroundColor: Colors.blue[700],
-        backgroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+        backgroundColor: Colors.greenAccent,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
         ),
       ),
       child: _isLoading
-          ? const CircularProgressIndicator()
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(),
+            )
           : Text(
-              _isEnglish ? 'Get Weather' : 'รับข้อมูลอากาศ',
+              _isEnglish ? 'Search' : 'ค้นหา',
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 14,
               ),
             ),
+    );
+  }
+
+  Widget _buildClearButton() {
+    return Center(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red[700],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          elevation: 2,
+          minimumSize: const Size(80, 40),
+        ),
+        onPressed: () {
+          setState(() {
+            _controller.clear();
+            _weatherData = null;
+          });
+        },
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.clear, color: Colors.white, size: 16),
+          ],
+        ),
+      ),
     );
   }
 
@@ -304,23 +346,25 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Widget _buildWeatherInfo(String label, String value, IconData icon) {
     return Card(
       elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      margin: const EdgeInsets.only(bottom: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.only(bottom: 14),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
         child: Row(
           children: [
-            Icon(icon, color: Colors.blue[700], size: 30),
-            const SizedBox(width: 20),
+            Icon(icon, color: Colors.blue[600], size: 24),
+            const SizedBox(width: 14),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(label,
-                    style: TextStyle(fontSize: 20, color: Colors.grey[600])),
-                const SizedBox(height: 5),
-                Text(value,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
+                    style: TextStyle(fontSize: 18, color: Colors.grey[500])),
+                const SizedBox(height: 6),
+                Text(
+                  value,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
               ],
             ),
           ],

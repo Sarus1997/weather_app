@@ -36,7 +36,7 @@ class BuildLineGraph extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -46,7 +46,7 @@ class BuildLineGraph extends StatelessWidget {
                 Text(
                   isEnglish ? 'Weather Line Graph' : 'กราฟเส้นสภาพอากาศ',
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.blue[800],
                   ),
@@ -57,7 +57,7 @@ class BuildLineGraph extends StatelessWidget {
             Divider(color: Colors.grey.shade300, thickness: 1),
             const SizedBox(height: 10),
             SizedBox(
-              height: 250,
+              height: 200,
               child: LineChart(
                 LineChartData(
                   gridData: FlGridData(
