@@ -129,31 +129,37 @@ class _WeatherScreenState extends State<WeatherScreen> {
     );
   }
 
-  Widget _buildSmallScreenLayout() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.blue[700]!, Colors.blue[300]!],
+Widget _buildSmallScreenLayout() {
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Colors.blue[700]!, Colors.blue[300]!],
+      ),
+    ),
+    child: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            // Place the Search Card and Fetch Button in a Row
+            Row(
+              children: [
+                Expanded(child: _buildSearchCard()),
+                const SizedBox(width: 8),
+                _buildClearButton(),
+              ],
+            ),
+            const SizedBox(height: 10),
+            if (_weatherData != null) ..._buildWeatherInfoList(),
+          ],
         ),
       ),
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              _buildSearchCard(),
-              const SizedBox(height: 10),
-              _buildFetchButton(),
-              const SizedBox(height: 10),
-              if (_weatherData != null) ..._buildWeatherInfoList(),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildLargeScreenLayout() {
     return Container(
@@ -183,7 +189,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           _buildSearchCard(),
                           const SizedBox(
                               width:
-                                  5), // Changed to width for horizontal spacing
+                                  5),
                           _buildClearButton(),
                         ],
                       ),
@@ -234,7 +240,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       ),
       child: Container(
         constraints: const BoxConstraints(
-          maxWidth: 340,
+          maxWidth: 300,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
@@ -300,7 +306,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           elevation: 2,
-          minimumSize: const Size(80, 40),
+          minimumSize: const Size(50, 40),
         ),
         onPressed: () {
           setState(() {
