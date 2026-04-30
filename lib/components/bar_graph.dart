@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:weather_icons/weather_icons.dart';
+import 'package:weather_app/pages/weather_screen.dart'; // เพื่อเรียกใช้ GlassCard
 
 class BuildBarGraph extends StatelessWidget {
   final bool isEnglish;
@@ -14,181 +14,138 @@ class BuildBarGraph extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (weatherData == null) {
-      return Center(
-        child: Text(
-          isEnglish ? 'No data available' : 'ไม่มีข้อมูล',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.red,
-          ),
-        ),
-      );
+    if (weatherData == null) return const SizedBox.shrink();
+
+    // ดักจับ Type และ NaN ให้ปลอดภัย
+    double safeGet(dynamic value) {
+      if (value == null) return 0.0;
+      double v = (value as num).toDouble();
+      return v.isNaN ? 0.0 : v;
     }
 
-    // Extracting data with null safety
-    final temperature = weatherData!['main']?['temp'] ?? 0.0;
-    final humidity = weatherData?['main']?['humidity'] ?? 0.0;
-    final windSpeed = weatherData?['wind']?['speed'] ?? 0.0;
+    final temp = safeGet(weatherData!['main']?['temp']);
+    final humid = safeGet(weatherData!['main']?['humidity']);
+    final wind = safeGet(weatherData!['wind']?['speed']);
 
-    return Card(
-      elevation: 10,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue[200]!, Colors.blue[800]!],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 10,
-              spreadRadius: 5,
+    return GlassCard(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              isEnglish ? 'Weather Comparison' : 'เปรียบเทียบข้อมูลสภาพอากาศ',
+              style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    isEnglish ? 'Weather Bar Graph' : 'กราฟแท่งสภาพอากาศ',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+            const SizedBox(height: 30),
+            SizedBox(
+              height: 250, // เพิ่มความสูงให้ดูอลังการ
+              child: BarChart(
+                BarChartData(
+                  alignment: BarChartAlignment.spaceAround,
+                  maxY: 100, // ตั้ง Max ไว้ที่ 100 เพื่อให้ครอบคลุม % ความชื้น
+                  barTouchData: BarTouchData(
+                    enabled: true,
+                    touchTooltipData: BarTouchTooltipData(
+                      getTooltipColor: (_) => Colors.blueGrey.withOpacity(0.8),
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                        String label = '';
+                        if (group.x == 0)
+                          label = isEnglish ? 'Temp' : 'อุณหภูมิ';
+                        if (group.x == 1)
+                          label = isEnglish ? 'Humid' : 'ความชื้น';
+                        if (group.x == 2) label = isEnglish ? 'Wind' : 'แรงลม';
+                        return BarTooltipItem(
+                          '$label\n${rod.toY.toStringAsFixed(1)}',
+                          const TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        );
+                      },
                     ),
                   ),
-                ],
+                  titlesData: FlTitlesData(
+                    show: true,
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) {
+                          const style = TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold);
+                          switch (value.toInt()) {
+                            case 0:
+                              return Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(isEnglish ? 'Temp' : 'อุณหภูมิ',
+                                      style: style));
+                            case 1:
+                              return Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(isEnglish ? 'Humid' : 'ความชื้น',
+                                      style: style));
+                            case 2:
+                              return Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: Text(isEnglish ? 'Wind' : 'ลม',
+                                      style: style));
+                            default:
+                              return const Text('');
+                          }
+                        },
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 30,
+                        getTitlesWidget: (value, meta) => Text(
+                            '${value.toInt()}',
+                            style: const TextStyle(
+                                color: Colors.white38, fontSize: 10)),
+                      ),
+                    ),
+                    topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
+                  ),
+                  gridData: FlGridData(
+                      show: true,
+                      drawVerticalLine: false,
+                      getDrawingHorizontalLine: (value) =>
+                          FlLine(color: Colors.white12, strokeWidth: 1)),
+                  borderData: FlBorderData(show: false),
+                  barGroups: [
+                    _makeGroupData(0, temp, Colors.orangeAccent),
+                    _makeGroupData(1, humid, Colors.lightBlueAccent),
+                    _makeGroupData(2, wind, Colors.tealAccent),
+                  ],
+                ),
               ),
-              const SizedBox(height: 10),
-              buildBarChart(
-                label: isEnglish ? 'Temperature (°C)' : 'อุณหภูมิ (°C)',
-                value: temperature,
-                maxY: 50,
-              ),
-              const SizedBox(height: 10),
-              buildBarChart(
-                label: isEnglish ? 'Humidity (%)' : 'ความชื้น (%)',
-                value: humidity,
-                maxY: 100,
-              ),
-              const SizedBox(height: 10),
-              buildBarChart(
-                label: isEnglish ? 'Wind Speed (m/s)' : 'ความเร็วลม (m/s)',
-                value: windSpeed,
-                maxY: 20,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget buildBarChart({
-    required String label,
-    required double value,
-    required double maxY,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 150,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.center,
-              maxY: maxY,
-              barTouchData: BarTouchData(
-                enabled: true,
-                touchTooltipData: BarTouchTooltipData(
-                  tooltipPadding: const EdgeInsets.all(8),
-                  tooltipMargin: 8,
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      '${rod.toY}',
-                      const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              titlesData: FlTitlesData(
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40,
-                    getTitlesWidget: (value, meta) {
-                      return Text(
-                        value.toInt().toString(),
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                bottomTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                rightTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                topTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-              ),
-              gridData: FlGridData(
-                show: true,
-                getDrawingHorizontalLine: (value) {
-                  return const FlLine(
-                    color: Colors.white30,
-                    strokeWidth: 1,
-                  );
-                },
-              ),
-              borderData: FlBorderData(show: false),
-              barGroups: [
-                BarChartGroupData(
-                  x: 0,
-                  barRods: [
-                    BarChartRodData(
-                      toY: value,
-                      color: Colors.orangeAccent,
-                      width: 20,
-                      borderRadius: BorderRadius.circular(5),
-                      backDrawRodData: BackgroundBarChartRodData(
-                        show: true,
-                        color: Colors.white24,
-                        toY: maxY,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+  BarChartGroupData _makeGroupData(int x, double y, Color color) {
+    return BarChartGroupData(
+      x: x,
+      barRods: [
+        BarChartRodData(
+          toY: y,
+          color: color,
+          width: 25,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+          backDrawRodData: BackgroundBarChartRodData(
+            show: true,
+            toY: 100,
+            color: Colors.white.withOpacity(0.05),
           ),
         ),
       ],

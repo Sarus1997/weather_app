@@ -8,9 +8,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: 'Modern Weather App',
       debugShowCheckedModeBanner: false,
-      home: WeatherScreen(),
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blueAccent,
+          brightness:
+              Brightness.dark, // ใช้โทนดาร์กโหมดเป็นหลักเพื่อให้ดูหรูหรา
+        ),
+        fontFamily:
+            'Roboto', // สามารถเปลี่ยนเป็น 'Prompt' หรือ 'Kanit' ได้ถ้าลงฟอนต์ไว้
+      ),
+      home: const WeatherScreen(),
     );
   }
 }
